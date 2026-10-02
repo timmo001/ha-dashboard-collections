@@ -52,12 +52,20 @@ export interface HomeAssistant {
   states: Record<string, HassEntity>;
 }
 
+/**
+ * Home Assistant's heading card. Actions and badges are passed through to
+ * Home Assistant as they are.
+ */
 export interface HeadingCardConfig {
   type: "heading";
-  heading: string;
+  heading?: string;
   heading_style?: "title" | "subtitle";
   icon?: string;
+  tap_action?: { action: string };
+  badges?: { type?: string; entity?: string }[];
 }
+
+export type SectionHeadingConfig = Omit<HeadingCardConfig, "type">;
 
 export interface TileCardConfig {
   type: "tile";
@@ -127,9 +135,12 @@ export interface CollectionMatch {
  * Without `floor` or `area`, the section shows every matching entity grouped
  * by area. `floor` limits it to areas on that floor (`null` for areas without
  * a floor), and `area: null` limits it to entities without an area.
+ *
+ * `heading` replaces the heading at the top of the section.
  */
 export interface CollectionSectionStrategyConfig extends CollectionMatch {
   type: "custom:collection";
+  heading?: SectionHeadingConfig;
   floor?: string | null;
   area?: null;
 }

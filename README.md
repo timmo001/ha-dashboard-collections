@@ -68,12 +68,15 @@ In a sections view, add a section, open its YAML editor and replace the contents
 ```yaml
 strategy:
   type: custom:collection
+  heading:
+    heading: Temperatures
+    icon: mdi:thermometer
   filters:
     - domain: sensor
       device_class: temperature
 ```
 
-The section shows every matching entity grouped by area, with entities without an area last. After saving, from Home Assistant 2026.10 its filters can be edited in the section's editor without YAML.
+The section shows every matching entity grouped by area, with entities without an area last. `heading` is optional and takes the same options as Home Assistant's heading card, without `type`. After saving, from Home Assistant 2026.10 its heading and filters can be edited in the section's editor without YAML.
 
 ## Local development setup
 

@@ -6,6 +6,7 @@ import { setupLocalize, type TranslationKey } from "./localize";
 import type {
   CollectionFilter,
   CollectionMatch,
+  HeadingCardConfig,
   HomeAssistant,
 } from "./types";
 
@@ -105,23 +106,51 @@ const cleanFilter = (filter: CollectionFilter): CollectionFilter => {
   return cleaned;
 };
 
+export interface CardEditorElement extends HTMLElement {
+  hass?: HomeAssistant;
+  setConfig: (config: HeadingCardConfig) => void;
+}
+
+interface CardConstructor {
+  getConfigElement?: () => Promise<CardEditorElement>;
+  getStubConfig?: (hass: HomeAssistant) => HeadingCardConfig;
+}
+
+const loadCardConstructor = async (
+  type: string,
+): Promise<CardConstructor | undefined> => {
+  if (!window.loadCardHelpers) {
+    return undefined;
+  }
+
+  const helpers = await window.loadCardHelpers();
+
+  return helpers.createCardElement({ type }).constructor;
+};
+
 /**
  * Home Assistant loads `ha-form`, `ha-sortable` and the selectors on demand.
  * Loading the tile card editor pulls them in when the strategy editor opens
  * before anything else has.
  */
 export const loadEditorElements = async () => {
-  if (
-    (customElements.get("ha-form") && customElements.get("ha-sortable")) ||
-    !window.loadCardHelpers
-  ) {
+  if (customElements.get("ha-form") && customElements.get("ha-sortable")) {
     return;
   }
 
-  const helpers = await window.loadCardHelpers();
-  const tileCard = helpers.createCardElement({ type: "tile" });
+  const tileCard = await loadCardConstructor("tile");
 
-  await tileCard.constructor.getConfigElement?.();
+  await tileCard?.getConfigElement?.();
+};
+
+/** Home Assistant's heading card editor and its default heading. */
+export const loadHeadingCard = async (hass: HomeAssistant) => {
+  const headingCard = await loadCardConstructor("heading");
+  const editor = await headingCard?.getConfigElement?.();
+
+  return editor
+    ? { editor, stubConfig: headingCard?.getStubConfig?.(hass) }
+    : undefined;
 };
 
 /** Applies an edited `CollectionMatch` to a collection or section config. */
@@ -330,7 +359,7 @@ declare global {
   interface Window {
     loadCardHelpers?: () => Promise<{
       createCardElement: (config: { type: string }) => HTMLElement & {
-        constructor: { getConfigElement?: () => Promise<HTMLElement> };
+        constructor: CardConstructor;
       };
     }>;
   }

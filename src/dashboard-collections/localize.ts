@@ -42,6 +42,10 @@ const en = {
   "editor.filter_label": "Labels",
   "editor.filter_name": "Name contains",
   "editor.matching_entities": "Matching entities: {count}",
+  "editor.heading": "Heading",
+  "editor.show_heading": "Custom heading",
+  "editor.show_heading_helper":
+    "Replace the section's heading with your own, using all the heading card options.",
   "editor.include_diagnostic": "Include diagnostic and configuration entities",
   "editor.include_diagnostic_helper":
     "Many integrations mark battery and signal sensors as diagnostic.",

@@ -5,17 +5,15 @@ import {
   getCollectionEntities,
 } from "./collection-filter";
 import { loadEditorElements } from "./filters-editor";
-import { type LocalizeFunc, setupLocalize } from "./localize";
+import { setupLocalize } from "./localize";
 import "./section-editor";
+import { makeSectionHeading } from "./section-heading";
 import type {
   CollectionSectionStrategyConfig,
-  HeadingCardConfig,
   HomeAssistant,
   LovelaceCardConfig,
   LovelaceSectionConfig,
 } from "./types";
-
-const FLOOR_ICON = "mdi:floor-plan";
 
 const isInScope = (
   config: CollectionSectionStrategyConfig,
@@ -34,42 +32,6 @@ const isInScope = (
   }
 
   return true;
-};
-
-const makeSectionHeading = (
-  localize: LocalizeFunc,
-  hass: HomeAssistant,
-  config: CollectionSectionStrategyConfig,
-): HeadingCardConfig | undefined => {
-  if (config.area === null) {
-    return { type: "heading", heading: localize("section.no_area") };
-  }
-
-  if (config.floor === undefined) {
-    return undefined;
-  }
-
-  const areas = Object.values(hass.areas ?? {});
-
-  const floorCount =
-    Object.keys(hass.floors ?? {}).length +
-    (areas.some((area) => !area.floor_id) ? 1 : 0);
-
-  if (floorCount <= 1) {
-    return { type: "heading", heading: localize("section.areas") };
-  }
-
-  const floor = config.floor ? hass.floors?.[config.floor] : undefined;
-
-  if (!floor) {
-    return { type: "heading", heading: localize("section.other_areas") };
-  }
-
-  return {
-    type: "heading",
-    heading: floor.name,
-    icon: floor.icon || FLOOR_ICON,
-  };
 };
 
 const makeTiles = (entities: CollectionEntity[]): LovelaceCardConfig[] =>
