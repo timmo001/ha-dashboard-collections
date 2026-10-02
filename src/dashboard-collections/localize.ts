@@ -24,6 +24,13 @@ const en = {
   "editor.collection_move_down": "Move down",
   "editor.collection_title": "Title",
   "editor.collection_icon": "Icon",
+  "editor.collection_show_icon_and_title": "Show icon and title",
+  "editor.collection_show_icon_and_title_helper": "Show both icon and text title.",
+  "editor.collection_path": "URL",
+  "editor.collection_path_helper":
+    "This value will become part of the URL path to open this view. Leave empty to use the title.",
+  "editor.collection_path_invalid":
+    "Use only letters, numbers, hyphens and underscores, and not only numbers.",
   "editor.filters_helper":
     "An entity is shown when it matches any filter. Within a filter, every field you set must match.",
   "editor.filter_title": "Filter {number}",

@@ -54,9 +54,12 @@ strategy:
           device_class: temperature
     - title: Batteries
       icon: mdi:battery
+      include_diagnostic: true
       filters:
         - device_class: battery
 ```
+
+Each collection becomes a view. Besides `title`, `icon` and `filters`, a collection can set `show_icon_and_title: true` to show both in the view tab, and `path` to choose the view's URL. Without a `path`, the URL comes from the title.
 
 ## Use as a section
 

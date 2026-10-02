@@ -1,7 +1,7 @@
 import { ReactiveElement } from "lit";
 import { customElement } from "lit/decorators.js";
 import { getCollectionEntities } from "./collection-filter";
-import "./dashboard-editor";
+import { isValidViewPath } from "./dashboard-editor";
 import { loadEditorElements } from "./filters-editor";
 import { type LocalizeFunc, setupLocalize } from "./localize";
 import type {
@@ -65,14 +65,20 @@ const buildCollectionSections = (
   }));
 };
 
-const makeViewPath = (title: string, index: number, usedPaths: Set<string>) => {
-  const slug = title
+const makeViewPath = (
+  collection: CollectionConfig,
+  index: number,
+  usedPaths: Set<string>,
+) => {
+  const slug = collection.title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-  const path =
-    slug && !usedPaths.has(slug) ? slug : `collection-${index + 1}`;
+  const path = [collection.path, slug].find(
+    (candidate) =>
+      candidate && isValidViewPath(candidate) && !usedPaths.has(candidate),
+  ) ?? `collection-${index + 1}`;
 
   usedPaths.add(path);
 
@@ -107,8 +113,9 @@ export class CollectionsDashboardStrategy extends ReactiveElement {
         (collection, index): LovelaceViewConfig => ({
           type: "sections",
           title: collection.title,
-          path: makeViewPath(collection.title, index, usedPaths),
+          path: makeViewPath(collection, index, usedPaths),
           icon: collection.icon,
+          show_icon_and_title: collection.show_icon_and_title,
           max_columns: COLUMN_SPAN,
           sections: buildCollectionSections(localize, hass, collection),
         }),

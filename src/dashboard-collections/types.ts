@@ -91,6 +91,7 @@ export interface LovelaceViewConfig {
   title?: string;
   path?: string;
   icon?: string;
+  show_icon_and_title?: boolean;
   max_columns?: number;
   sections?: (LovelaceSectionConfig | LovelaceStrategySectionConfig)[];
 }
@@ -136,6 +137,8 @@ export interface CollectionSectionStrategyConfig extends CollectionMatch {
 export interface CollectionConfig extends CollectionMatch {
   title: string;
   icon?: string;
+  show_icon_and_title?: boolean;
+  path?: string;
 }
 
 export interface CollectionsDashboardStrategyConfig {

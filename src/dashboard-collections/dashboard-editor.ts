@@ -8,7 +8,7 @@ import {
 } from "./editor-item-group";
 import { applyMatch, MDI_DELETE_PATH, MDI_PLUS_PATH } from "./filters-editor";
 import "./filters-editor";
-import { type LocalizeFunc, setupLocalize } from "./localize";
+import { type LocalizeFunc, setupLocalize, type TranslationKey } from "./localize";
 import type {
   CollectionConfig,
   CollectionMatch,
@@ -29,16 +29,43 @@ const DEFAULT_COLLECTION_ICON = "mdi:view-grid";
 
 type DialogElement = HTMLElement & { width?: string };
 
-interface CollectionFormSchema {
-  name: "title" | "icon";
-  required?: boolean;
-  selector: { text: Record<string, never> } | { icon: Record<string, never> };
-}
+type CollectionDetails = Pick<
+  CollectionConfig,
+  "title" | "icon" | "show_icon_and_title" | "path"
+>;
+
+type CollectionFormSchema =
+  | { name: "title"; required: true; selector: { text: Record<string, never> } }
+  | { name: "icon"; selector: { icon: Record<string, never> } }
+  | { name: "show_icon_and_title"; selector: { boolean: Record<string, never> } }
+  | { name: "path"; selector: { text: Record<string, never> } };
 
 const COLLECTION_SCHEMA: CollectionFormSchema[] = [
   { name: "title", required: true, selector: { text: {} } },
   { name: "icon", selector: { icon: {} } },
+  { name: "show_icon_and_title", selector: { boolean: {} } },
+  { name: "path", selector: { text: {} } },
 ];
+
+const LABEL_KEYS: Record<CollectionFormSchema["name"], TranslationKey> = {
+  title: "editor.collection_title",
+  icon: "editor.collection_icon",
+  show_icon_and_title: "editor.collection_show_icon_and_title",
+  path: "editor.collection_path",
+};
+
+const HELPER_KEYS: Partial<Record<CollectionFormSchema["name"], TranslationKey>> = {
+  show_icon_and_title: "editor.collection_show_icon_and_title_helper",
+  path: "editor.collection_path_helper",
+};
+
+const VALID_PATH = /^[a-zA-Z0-9_-]+$/;
+
+const INTEGER = /^[0-9]+$/;
+
+/** Same rules as Home Assistant's view editor. Numbers are view indexes. */
+export const isValidViewPath = (path: string) =>
+  VALID_PATH.test(path) && !INTEGER.test(path);
 
 @customElement("dashboard-collections-strategy-editor")
 export class DashboardCollectionsStrategyEditor extends LitElement {
@@ -168,10 +195,23 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
       <div class="sub-editor-content">
         <ha-form
           .hass=${this.hass}
-          .data=${{ title: collection.title, icon: collection.icon }}
+          .data=${{
+            title: collection.title,
+            icon: collection.icon,
+            show_icon_and_title: collection.show_icon_and_title ?? false,
+            path: collection.path,
+          }}
           .schema=${COLLECTION_SCHEMA}
-          .computeLabel=${(item: CollectionFormSchema) =>
-            localize(item.name === "title" ? "editor.collection_title" : "editor.collection_icon")}
+          .error=${collection.path && !isValidViewPath(collection.path)
+            ? { path: localize("editor.collection_path_invalid") }
+            : undefined}
+          .computeLabel=${(item: CollectionFormSchema) => localize(LABEL_KEYS[item.name])}
+          .computeHelper=${(item: CollectionFormSchema) => {
+            const key = HELPER_KEYS[item.name];
+
+            return key ? localize(key) : undefined;
+          }}
+          .computeError=${(error: string) => error}
           @value-changed=${this._collectionDetailsChanged}
         ></ha-form>
         <dashboard-collections-filters-editor
@@ -227,18 +267,32 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     this._updateCollections(collections);
   }
 
-  private _collectionDetailsChanged = (
-    ev: CustomEvent<{ value: Pick<CollectionConfig, "title" | "icon"> }>,
-  ) => {
+  private _collectionDetailsChanged = (ev: CustomEvent<{ value: CollectionDetails }>) => {
     ev.stopPropagation();
 
-    const { title, icon } = ev.detail.value;
+    const { title, icon, show_icon_and_title, path } = ev.detail.value;
 
-    this._updateEditingCollection((collection) => ({
-      ...collection,
-      title: title ?? "",
-      icon: icon || undefined,
-    }));
+    this._updateEditingCollection((collection) => {
+      const updated: CollectionConfig = { ...collection, title: title ?? "" };
+
+      delete updated.icon;
+      delete updated.show_icon_and_title;
+      delete updated.path;
+
+      if (icon) {
+        updated.icon = icon;
+      }
+
+      if (show_icon_and_title) {
+        updated.show_icon_and_title = true;
+      }
+
+      if (path?.trim()) {
+        updated.path = path.trim();
+      }
+
+      return updated;
+    });
   };
 
   private _collectionMatchChanged = (ev: CustomEvent<{ value: CollectionMatch }>) => {
