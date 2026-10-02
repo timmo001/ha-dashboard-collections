@@ -1,5 +1,6 @@
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 import { getCollectionEntities } from "./collection-filter";
 import {
   editorItemGroupStyles,
@@ -19,11 +20,7 @@ import type {
 const MDI_PENCIL_PATH =
   "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z";
 
-const MDI_ARROW_UP_PATH =
-  "M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z";
-
-const MDI_ARROW_DOWN_PATH =
-  "M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z";
+const MDI_DRAG_PATH = "M21,11H3V9H21V11M21,13H3V15H21V13Z";
 
 const DEFAULT_COLLECTION_ICON = "mdi:view-grid";
 
@@ -77,6 +74,10 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
 
   private _dialog?: { element: DialogElement; width?: string };
 
+  private _collectionKeys = new WeakMap<CollectionConfig, string>();
+
+  private _nextCollectionKey = 0;
+
   public setConfig(config: CollectionsDashboardStrategyConfig) {
     this._config = config;
   }
@@ -127,9 +128,18 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
       <div class="items">
         ${collections.length === 0
           ? html`<p class="secondary">${localize("editor.no_collections")}</p>`
-          : collections.map((collection, index) =>
-              this._renderCollectionRow(localize, collection, index, collections.length),
-            )}
+          : html`
+              <ha-sortable handle-selector=".handle" @item-moved=${this._collectionMoved}>
+                <div class="rows">
+                  ${repeat(
+                    collections,
+                    (collection) => this._collectionKey(collection),
+                    (collection, index) =>
+                      this._renderCollectionRow(localize, collection, index),
+                  )}
+                </div>
+              </ha-sortable>
+            `}
         <ha-button appearance="filled" size="s" @click=${this._addCollection}>
           <ha-svg-icon .path=${MDI_PLUS_PATH} slot="start"></ha-svg-icon>
           ${localize("editor.collection_add")}
@@ -138,14 +148,30 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     `;
   }
 
+  /** Stable keys so rows keep their DOM when dragged. */
+  private _collectionKey(collection: CollectionConfig) {
+    let key = this._collectionKeys.get(collection);
+
+    if (!key) {
+      key = String(this._nextCollectionKey++);
+      this._collectionKeys.set(collection, key);
+    }
+
+    return key;
+  }
+
   private _renderCollectionRow(
     localize: LocalizeFunc,
     collection: CollectionConfig,
     index: number,
-    count: number,
   ) {
     return renderEditorItemRow({
-      icon: html`<ha-icon icon=${collection.icon || DEFAULT_COLLECTION_ICON}></ha-icon>`,
+      icon: html`
+        <div class="handle">
+          <ha-svg-icon .path=${MDI_DRAG_PATH}></ha-svg-icon>
+        </div>
+        <ha-icon icon=${collection.icon || DEFAULT_COLLECTION_ICON}></ha-icon>
+      `,
       primary: collection.title,
       secondary: localize("editor.matching_entities", {
         count: this.hass
@@ -153,20 +179,6 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
           : 0,
       }),
       actions: html`
-        <ha-icon-button
-          .label=${localize("editor.collection_move_up")}
-          .path=${MDI_ARROW_UP_PATH}
-          .disabled=${index === 0}
-          data-index=${index}
-          @click=${this._moveUp}
-        ></ha-icon-button>
-        <ha-icon-button
-          .label=${localize("editor.collection_move_down")}
-          .path=${MDI_ARROW_DOWN_PATH}
-          .disabled=${index === count - 1}
-          data-index=${index}
-          @click=${this._moveDown}
-        ></ha-icon-button>
         <ha-icon-button
           .label=${localize("editor.collection_edit")}
           .path=${MDI_PENCIL_PATH}
@@ -251,21 +263,18 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     );
   };
 
-  private _moveUp = (ev: Event) => {
-    this._move(eventIndex(ev), -1);
-  };
+  private _collectionMoved = (
+    ev: CustomEvent<{ oldIndex: number; newIndex: number }>,
+  ) => {
+    ev.stopPropagation();
 
-  private _moveDown = (ev: Event) => {
-    this._move(eventIndex(ev), 1);
-  };
-
-  private _move(index: number, offset: -1 | 1) {
+    const { oldIndex, newIndex } = ev.detail;
     const collections = [...(this._config?.collections ?? [])];
-    const [moved] = collections.splice(index, 1);
+    const [moved] = collections.splice(oldIndex, 1);
 
-    collections.splice(index + offset, 0, moved);
+    collections.splice(newIndex, 0, moved);
     this._updateCollections(collections);
-  }
+  };
 
   private _collectionDetailsChanged = (ev: CustomEvent<{ value: CollectionDetails }>) => {
     ev.stopPropagation();
@@ -335,6 +344,26 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
   static styles = [
     editorItemGroupStyles,
     css`
+      ha-sortable {
+        display: block;
+      }
+
+      .rows {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .handle {
+        display: flex;
+        cursor: move; /* fallback if grab cursor is unsupported */
+        cursor: grab;
+        color: var(--secondary-text-color);
+      }
+
+      .handle > * {
+        pointer-events: none;
+      }
+
       .secondary {
         color: var(--secondary-text-color);
         font-size: 0.9rem;

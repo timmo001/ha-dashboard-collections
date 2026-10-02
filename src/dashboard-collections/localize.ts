@@ -20,8 +20,6 @@ const en = {
   "editor.collection_add": "Add collection",
   "editor.collection_edit": "Edit collection",
   "editor.collection_remove": "Remove collection",
-  "editor.collection_move_up": "Move up",
-  "editor.collection_move_down": "Move down",
   "editor.collection_title": "Title",
   "editor.collection_icon": "Icon",
   "editor.collection_show_icon_and_title": "Show icon and title",

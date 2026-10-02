@@ -106,12 +106,15 @@ const cleanFilter = (filter: CollectionFilter): CollectionFilter => {
 };
 
 /**
- * Home Assistant loads `ha-form` and its selectors on demand. Loading the tile
- * card editor pulls them in when the strategy editor opens before anything
- * else has.
+ * Home Assistant loads `ha-form`, `ha-sortable` and the selectors on demand.
+ * Loading the tile card editor pulls them in when the strategy editor opens
+ * before anything else has.
  */
 export const loadEditorElements = async () => {
-  if (customElements.get("ha-form") || !window.loadCardHelpers) {
+  if (
+    (customElements.get("ha-form") && customElements.get("ha-sortable")) ||
+    !window.loadCardHelpers
+  ) {
     return;
   }
 
