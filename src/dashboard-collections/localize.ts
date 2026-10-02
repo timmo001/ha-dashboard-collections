@@ -6,6 +6,12 @@ const en = {
   "view.empty_title": "Collections",
   "view.empty_content":
     "No collections yet. Edit this dashboard to add one.",
+
+  // Collection sections
+  "section.areas": "Areas",
+  "section.other_areas": "Other areas",
+  "section.no_area": "No area",
+  "section.empty": "No entities match this collection.",
 };
 
 export type TranslationKey = keyof typeof en;

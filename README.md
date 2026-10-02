@@ -2,12 +2,28 @@
 
 Custom Lovelace strategies for Home Assistant that build dashboards from filtered collections of entities, such as temperature, humidity or batteries, grouped by area.
 
-> Early development. The strategies are registered but don't generate content yet.
+> Early development. Collections are configured in YAML for now; the dashboard and section editors come next.
 
 ## Features
 
-- `custom:collections` dashboard strategy, available from **Add dashboard**
+- `custom:collections` dashboard strategy, available from **Add dashboard**. Each collection becomes a view, with one section per floor, then areas without a floor, then entities without an area.
 - `custom:collection` section strategy, usable in any sections view
+
+## Filters
+
+Each collection has a list of filters. An entity is shown when it matches any filter in the list, and it matches a filter when it matches every key set in that filter. Hidden, configuration and diagnostic entities are left out.
+
+| Key | Matches |
+| --- | --- |
+| `domain` | Entity domain, for example `sensor` |
+| `device_class` | Device class, for example `temperature` |
+| `integration` | Integration that provides the entity, for example `zha` |
+| `area` | Area ID of the entity, or of its device |
+| `floor` | Floor ID of that area |
+| `label` | Label ID on the entity |
+| `name` | Every word appears in the entity name or ID |
+
+Each key except `name` takes one value or a list.
 
 ## Install with HACS
 
@@ -32,8 +48,15 @@ Create a dashboard from `Settings -> Dashboards -> Add dashboard` and choose **C
 strategy:
   type: custom:collections
   collections:
+    - title: Temperature
+      icon: mdi:thermometer
+      filters:
+        - domain: sensor
+          device_class: temperature
     - title: Batteries
       icon: mdi:battery
+      filters:
+        - device_class: battery
 ```
 
 ## Use as a section
@@ -43,7 +66,12 @@ In a sections view, add a section, open its YAML editor and replace the contents
 ```yaml
 strategy:
   type: custom:collection
+  filters:
+    - domain: sensor
+      device_class: temperature
 ```
+
+The section shows every matching entity grouped by area, with entities without an area last.
 
 ## Local development setup
 

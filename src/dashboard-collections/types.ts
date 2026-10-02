@@ -12,10 +12,13 @@ export interface HassEntity {
 
 export interface EntityRegistryEntry {
   entity_id: string;
-  device_id: string | null;
+  device_id?: string | null;
   area_id?: string | null;
+  entity_category?: string | null;
   hidden?: boolean;
+  labels?: string[];
   name?: string | null;
+  platform?: string;
 }
 
 export interface DeviceRegistryEntry {
@@ -49,14 +52,32 @@ export interface HomeAssistant {
   states: Record<string, HassEntity>;
 }
 
-export interface LovelaceCardConfig {
-  type: string;
-  content?: string;
+export interface HeadingCardConfig {
+  type: "heading";
+  heading: string;
+  heading_style?: "title" | "subtitle";
+  icon?: string;
 }
+
+export interface TileCardConfig {
+  type: "tile";
+  entity: string;
+}
+
+export interface MarkdownCardConfig {
+  type: "markdown";
+  content: string;
+}
+
+export type LovelaceCardConfig =
+  | HeadingCardConfig
+  | TileCardConfig
+  | MarkdownCardConfig;
 
 export interface LovelaceSectionConfig {
   type?: string;
   column_span?: number;
+  disabled?: boolean;
   cards?: LovelaceCardConfig[];
 }
 
@@ -78,13 +99,36 @@ export interface LovelaceDashboardConfig {
   views: LovelaceViewConfig[];
 }
 
+/**
+ * An entity matches a filter when it matches every key that is set. A single
+ * value or a list is accepted for the list keys.
+ */
+export interface CollectionFilter {
+  domain?: string | string[];
+  device_class?: string | string[];
+  integration?: string | string[];
+  area?: string | string[];
+  floor?: string | string[];
+  label?: string | string[];
+  name?: string;
+}
+
+/**
+ * Without `floor` or `area`, the section shows every matching entity grouped
+ * by area. `floor` limits it to areas on that floor (`null` for areas without
+ * a floor), and `area: null` limits it to entities without an area.
+ */
 export interface CollectionSectionStrategyConfig {
   type: "custom:collection";
+  filters?: CollectionFilter[];
+  floor?: string | null;
+  area?: null;
 }
 
 export interface CollectionConfig {
   title: string;
   icon?: string;
+  filters?: CollectionFilter[];
 }
 
 export interface CollectionsDashboardStrategyConfig {
