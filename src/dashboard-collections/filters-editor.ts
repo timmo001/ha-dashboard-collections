@@ -3,7 +3,11 @@ import { customElement, property } from "lit/decorators.js";
 import { getCollectionEntities } from "./collection-filter";
 import { eventIndex } from "./editor-item-group";
 import { setupLocalize, type TranslationKey } from "./localize";
-import type { CollectionFilter, HomeAssistant } from "./types";
+import type {
+  CollectionFilter,
+  CollectionMatch,
+  HomeAssistant,
+} from "./types";
 
 export const MDI_DELETE_PATH =
   "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z";
@@ -49,6 +53,10 @@ const LIST_KEYS: FilterListKey[] = [
   "area",
   "floor",
   "label",
+];
+
+const OPTIONS_SCHEMA = [
+  { name: "include_diagnostic", selector: { boolean: {} } },
 ];
 
 const uniqueSorted = (values: (string | undefined)[]) =>
@@ -113,15 +121,30 @@ export const loadEditorElements = async () => {
   await tileCard.constructor.getConfigElement?.();
 };
 
+/** Applies an edited `CollectionMatch` to a collection or section config. */
+export const applyMatch = <T extends CollectionMatch>(
+  config: T,
+  match: CollectionMatch,
+): T => {
+  const updated: T = { ...config, ...match };
+
+  if (!match.include_diagnostic) {
+    delete updated.include_diagnostic;
+  }
+
+  return updated;
+};
+
 /**
- * Edits a list of collection filters. Shared by the dashboard editor and the
- * section strategy editor. Fires `value-changed` with the new list.
+ * Edits a collection's filters and whether diagnostic entities are included.
+ * Shared by the dashboard editor and the section strategy editor. Fires
+ * `value-changed` with the new `CollectionMatch`.
  */
 @customElement("dashboard-collections-filters-editor")
 export class DashboardCollectionsFiltersEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @property({ attribute: false }) public filters: CollectionFilter[] = [];
+  @property({ attribute: false }) public value: CollectionMatch = {};
 
   protected render() {
     if (!this.hass) {
@@ -130,11 +153,11 @@ export class DashboardCollectionsFiltersEditor extends LitElement {
 
     const localize = setupLocalize(this.hass);
     const schema = this._schema(this.hass);
-    const matchCount = getCollectionEntities(this.hass, this.filters).length;
+    const matchCount = getCollectionEntities(this.hass, this.value).length;
 
     return html`
       <p class="helper">${localize("editor.filters_helper")}</p>
-      ${this.filters.map(
+      ${this._filters.map(
         (filter, index) => html`
           <ha-expansion-panel
             outlined
@@ -174,7 +197,19 @@ export class DashboardCollectionsFiltersEditor extends LitElement {
           ${localize("editor.matching_entities", { count: matchCount })}
         </span>
       </div>
+      <ha-form
+        .hass=${this.hass}
+        .data=${{ include_diagnostic: this.value.include_diagnostic ?? false }}
+        .schema=${OPTIONS_SCHEMA}
+        .computeLabel=${() => localize("editor.include_diagnostic")}
+        .computeHelper=${() => localize("editor.include_diagnostic_helper")}
+        @value-changed=${this._optionsChanged}
+      ></ha-form>
     `;
+  }
+
+  private get _filters() {
+    return this.value.filters ?? [];
   }
 
   private _schema(hass: HomeAssistant): FilterFormSchema[] {
@@ -213,25 +248,40 @@ export class DashboardCollectionsFiltersEditor extends LitElement {
 
     const index = eventIndex(ev);
 
-    this._emit(
-      this.filters.map((filter, filterIndex) =>
+    this._emit({
+      filters: this._filters.map((filter, filterIndex) =>
         filterIndex === index ? cleanFilter(ev.detail.value) : filter,
       ),
-    );
+    });
   };
 
   private _addFilter = () => {
-    this._emit([...this.filters, {}]);
+    this._emit({ filters: [...this._filters, {}] });
   };
 
   private _removeFilter = (ev: Event) => {
     const index = eventIndex(ev);
 
-    this._emit(this.filters.filter((_filter, filterIndex) => filterIndex !== index));
+    this._emit({
+      filters: this._filters.filter((_filter, filterIndex) => filterIndex !== index),
+    });
   };
 
-  private _emit(filters: CollectionFilter[]) {
-    this.dispatchEvent(new CustomEvent("value-changed", { detail: { value: filters } }));
+  private _optionsChanged = (
+    ev: CustomEvent<{ value: { include_diagnostic?: boolean } }>,
+  ) => {
+    ev.stopPropagation();
+    this._emit({ include_diagnostic: ev.detail.value.include_diagnostic || undefined });
+  };
+
+  private _emit(updates: CollectionMatch) {
+    const value: CollectionMatch = { ...this.value, ...updates };
+
+    if (!value.include_diagnostic) {
+      delete value.include_diagnostic;
+    }
+
+    this.dispatchEvent(new CustomEvent("value-changed", { detail: { value } }));
   }
 
   static styles = css`

@@ -1,4 +1,8 @@
-import type { CollectionFilter, HomeAssistant } from "./types";
+import type {
+  CollectionFilter,
+  CollectionMatch,
+  HomeAssistant,
+} from "./types";
 
 export interface CollectionEntity {
   entityId: string;
@@ -80,12 +84,13 @@ const locateEntity = (
 };
 
 /**
- * Visible entities matching any of the filters, sorted by name. Hidden,
- * configuration and diagnostic entities are left out.
+ * Visible entities matching any of the filters, sorted by name. Hidden
+ * entities are left out, and so are configuration and diagnostic entities
+ * unless `include_diagnostic` is set.
  */
 export const getCollectionEntities = (
   hass: HomeAssistant,
-  filters: CollectionFilter[],
+  { filters = [], include_diagnostic }: CollectionMatch,
 ): CollectionEntity[] => {
   if (filters.length === 0) {
     return [];
@@ -95,7 +100,10 @@ export const getCollectionEntities = (
     .filter((entityId) => {
       const registryEntry = hass.entities?.[entityId];
 
-      return !registryEntry?.hidden && !registryEntry?.entity_category;
+      return (
+        !registryEntry?.hidden &&
+        (include_diagnostic || !registryEntry?.entity_category)
+      );
     })
     .map((entityId) => locateEntity(hass, entityId))
     .filter((entity) =>

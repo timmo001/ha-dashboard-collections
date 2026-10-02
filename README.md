@@ -10,7 +10,7 @@ Custom Lovelace strategies for Home Assistant that build dashboards from filtere
 
 ## Filters
 
-Each collection has a list of filters. An entity is shown when it matches any filter in the list, and it matches a filter when it matches every key set in that filter. Hidden, configuration and diagnostic entities are left out.
+Each collection has a list of filters. An entity is shown when it matches any filter in the list, and it matches a filter when it matches every key set in that filter. Hidden entities are left out. Configuration and diagnostic entities are left out too, unless the collection or section sets `include_diagnostic: true`. Many integrations mark battery sensors as diagnostic.
 
 | Key | Matches |
 | --- | --- |

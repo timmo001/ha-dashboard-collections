@@ -114,21 +114,28 @@ export interface CollectionFilter {
 }
 
 /**
+ * Which entities a collection shows. Diagnostic and configuration entities
+ * are left out unless `include_diagnostic` is set.
+ */
+export interface CollectionMatch {
+  filters?: CollectionFilter[];
+  include_diagnostic?: boolean;
+}
+
+/**
  * Without `floor` or `area`, the section shows every matching entity grouped
  * by area. `floor` limits it to areas on that floor (`null` for areas without
  * a floor), and `area: null` limits it to entities without an area.
  */
-export interface CollectionSectionStrategyConfig {
+export interface CollectionSectionStrategyConfig extends CollectionMatch {
   type: "custom:collection";
-  filters?: CollectionFilter[];
   floor?: string | null;
   area?: null;
 }
 
-export interface CollectionConfig {
+export interface CollectionConfig extends CollectionMatch {
   title: string;
   icon?: string;
-  filters?: CollectionFilter[];
 }
 
 export interface CollectionsDashboardStrategyConfig {

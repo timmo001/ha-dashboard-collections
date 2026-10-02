@@ -37,6 +37,9 @@ const en = {
   "editor.filter_label": "Labels",
   "editor.filter_name": "Name contains",
   "editor.matching_entities": "Matching entities: {count}",
+  "editor.include_diagnostic": "Include diagnostic and configuration entities",
+  "editor.include_diagnostic_helper":
+    "Many integrations mark battery and signal sensors as diagnostic.",
 };
 
 export type TranslationKey = keyof typeof en;

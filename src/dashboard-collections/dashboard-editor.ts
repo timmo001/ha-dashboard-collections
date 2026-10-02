@@ -6,12 +6,12 @@ import {
   eventIndex,
   renderEditorItemRow,
 } from "./editor-item-group";
-import { MDI_DELETE_PATH, MDI_PLUS_PATH } from "./filters-editor";
+import { applyMatch, MDI_DELETE_PATH, MDI_PLUS_PATH } from "./filters-editor";
 import "./filters-editor";
 import { type LocalizeFunc, setupLocalize } from "./localize";
 import type {
   CollectionConfig,
-  CollectionFilter,
+  CollectionMatch,
   CollectionsDashboardStrategyConfig,
   HomeAssistant,
 } from "./types";
@@ -122,7 +122,7 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
       primary: collection.title,
       secondary: localize("editor.matching_entities", {
         count: this.hass
-          ? getCollectionEntities(this.hass, collection.filters ?? []).length
+          ? getCollectionEntities(this.hass, collection).length
           : 0,
       }),
       actions: html`
@@ -176,8 +176,8 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
         ></ha-form>
         <dashboard-collections-filters-editor
           .hass=${this.hass}
-          .filters=${collection.filters ?? []}
-          @value-changed=${this._collectionFiltersChanged}
+          .value=${collection}
+          @value-changed=${this._collectionMatchChanged}
         ></dashboard-collections-filters-editor>
       </div>
     `;
@@ -234,14 +234,22 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
 
     const { title, icon } = ev.detail.value;
 
-    this._updateEditingCollection({ title: title ?? "", icon: icon || undefined });
+    this._updateEditingCollection((collection) => ({
+      ...collection,
+      title: title ?? "",
+      icon: icon || undefined,
+    }));
   };
 
-  private _collectionFiltersChanged = (ev: CustomEvent<{ value: CollectionFilter[] }>) => {
-    this._updateEditingCollection({ filters: ev.detail.value });
+  private _collectionMatchChanged = (ev: CustomEvent<{ value: CollectionMatch }>) => {
+    this._updateEditingCollection((collection) =>
+      applyMatch(collection, ev.detail.value),
+    );
   };
 
-  private _updateEditingCollection(updates: Partial<CollectionConfig>) {
+  private _updateEditingCollection(
+    update: (collection: CollectionConfig) => CollectionConfig,
+  ) {
     const index = this._editingIndex;
 
     if (index === undefined) {
@@ -250,7 +258,7 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
 
     this._updateCollections(
       (this._config?.collections ?? []).map((collection, collectionIndex) =>
-        collectionIndex === index ? { ...collection, ...updates } : collection,
+        collectionIndex === index ? update(collection) : collection,
       ),
     );
   }

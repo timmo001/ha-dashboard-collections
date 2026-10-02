@@ -1,8 +1,9 @@
 import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { applyMatch } from "./filters-editor";
 import "./filters-editor";
 import type {
-  CollectionFilter,
+  CollectionMatch,
   CollectionSectionStrategyConfig,
   HomeAssistant,
 } from "./types";
@@ -25,18 +26,18 @@ export class DashboardCollectionsSectionEditor extends LitElement {
     return html`
       <dashboard-collections-filters-editor
         .hass=${this.hass}
-        .filters=${this._config.filters ?? []}
-        @value-changed=${this._filtersChanged}
+        .value=${this._config}
+        @value-changed=${this._matchChanged}
       ></dashboard-collections-filters-editor>
     `;
   }
 
-  private _filtersChanged = (ev: CustomEvent<{ value: CollectionFilter[] }>) => {
+  private _matchChanged = (ev: CustomEvent<{ value: CollectionMatch }>) => {
     if (!this._config) {
       return;
     }
 
-    this._config = { ...this._config, filters: ev.detail.value };
+    this._config = applyMatch(this._config, ev.detail.value);
     this.dispatchEvent(
       new CustomEvent("config-changed", {
         detail: { config: this._config },

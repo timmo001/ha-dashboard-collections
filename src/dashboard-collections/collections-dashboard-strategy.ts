@@ -32,8 +32,8 @@ const buildCollectionSections = (
   hass: HomeAssistant,
   collection: CollectionConfig,
 ): (LovelaceSectionConfig | LovelaceStrategySectionConfig)[] => {
-  const filters = collection.filters ?? [];
-  const entities = getCollectionEntities(hass, filters);
+  const { filters = [], include_diagnostic } = collection;
+  const entities = getCollectionEntities(hass, collection);
 
   if (entities.length === 0) {
     return [makeEmptySection(localize("section.empty"))];
@@ -56,7 +56,12 @@ const buildCollectionSections = (
 
   return scopes.map((scope) => ({
     column_span: COLUMN_SPAN,
-    strategy: { type: "custom:collection", filters, ...scope },
+    strategy: {
+      type: "custom:collection",
+      filters,
+      include_diagnostic,
+      ...scope,
+    },
   }));
 };
 
