@@ -4,7 +4,9 @@ import {
   type CollectionEntity,
   getCollectionEntities,
 } from "./collection-filter";
+import { loadEditorElements } from "./filters-editor";
 import { type LocalizeFunc, setupLocalize } from "./localize";
+import "./section-editor";
 import type {
   CollectionSectionStrategyConfig,
   HeadingCardConfig,
@@ -75,6 +77,12 @@ const makeTiles = (entities: CollectionEntity[]): LovelaceCardConfig[] =>
 
 @customElement("ll-strategy-section-collection")
 export class CollectionSectionStrategy extends ReactiveElement {
+  public static async getConfigElement() {
+    await loadEditorElements();
+
+    return document.createElement("dashboard-collections-section-editor");
+  }
+
   public static async generate(
     config: CollectionSectionStrategyConfig,
     hass: HomeAssistant,

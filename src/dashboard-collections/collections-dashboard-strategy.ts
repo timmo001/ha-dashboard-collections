@@ -1,6 +1,8 @@
 import { ReactiveElement } from "lit";
 import { customElement } from "lit/decorators.js";
 import { getCollectionEntities } from "./collection-filter";
+import "./dashboard-editor";
+import { loadEditorElements } from "./filters-editor";
 import { type LocalizeFunc, setupLocalize } from "./localize";
 import type {
   CollectionConfig,
@@ -107,6 +109,12 @@ export class CollectionsDashboardStrategy extends ReactiveElement {
         }),
       ),
     };
+  }
+
+  public static async getConfigElement() {
+    await loadEditorElements();
+
+    return document.createElement("dashboard-collections-strategy-editor");
   }
 
   /**

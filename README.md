@@ -2,12 +2,11 @@
 
 Custom Lovelace strategies for Home Assistant that build dashboards from filtered collections of entities, such as temperature, humidity or batteries, grouped by area.
 
-> Early development. Collections are configured in YAML for now; the dashboard and section editors come next.
-
 ## Features
 
 - `custom:collections` dashboard strategy, available from **Add dashboard**. Each collection becomes a view, with one section per floor, then areas without a floor, then entities without an area.
 - `custom:collection` section strategy, usable in any sections view
+- Editors for both, so collections and filters can be set up without YAML
 
 ## Filters
 
@@ -42,7 +41,7 @@ Each key except `name` takes one value or a list.
 
 ## Use as a full dashboard
 
-Create a dashboard from `Settings -> Dashboards -> Add dashboard` and choose **Collections**, or use YAML:
+Create a dashboard from `Settings -> Dashboards -> Add dashboard` and choose **Collections**. Open the dashboard, choose **Edit dashboard**, then add collections and their filters. Or use YAML:
 
 ```yaml
 strategy:
@@ -71,7 +70,7 @@ strategy:
       device_class: temperature
 ```
 
-The section shows every matching entity grouped by area, with entities without an area last.
+The section shows every matching entity grouped by area, with entities without an area last. After saving, from Home Assistant 2026.10 its filters can be edited in the section's editor without YAML.
 
 ## Local development setup
 

@@ -20,6 +20,9 @@ It is distributed as a HACS `Dashboard` repository, not as a custom integration.
 - `src/dashboard-collections/localize.ts` contains all user-facing strings and the translation helper
 - `src/dashboard-collections/collections-dashboard-strategy.ts` generates full dashboards, one sections view per collection
 - `src/dashboard-collections/collection-section-strategy.ts` generates a single collection section
+- `src/dashboard-collections/collection-filter.ts` matches entities against collection filters
+- `src/dashboard-collections/filters-editor.ts` is the filter editor shared by both strategy editors
+- `src/dashboard-collections/dashboard-editor.ts` and `section-editor.ts` are the strategy editors
 
 ## Setup commands
 

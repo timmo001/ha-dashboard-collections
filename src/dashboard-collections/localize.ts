@@ -12,6 +12,31 @@ const en = {
   "section.other_areas": "Other areas",
   "section.no_area": "No area",
   "section.empty": "No entities match this collection.",
+
+  // Editors
+  "editor.back": "Back",
+  "editor.no_collections": "No collections yet.",
+  "editor.new_collection": "New collection",
+  "editor.collection_add": "Add collection",
+  "editor.collection_edit": "Edit collection",
+  "editor.collection_remove": "Remove collection",
+  "editor.collection_move_up": "Move up",
+  "editor.collection_move_down": "Move down",
+  "editor.collection_title": "Title",
+  "editor.collection_icon": "Icon",
+  "editor.filters_helper":
+    "An entity is shown when it matches any filter. Within a filter, every field you set must match.",
+  "editor.filter_title": "Filter {number}",
+  "editor.filter_add": "Add filter",
+  "editor.filter_remove": "Remove filter",
+  "editor.filter_domain": "Domains",
+  "editor.filter_device_class": "Device classes",
+  "editor.filter_integration": "Integrations",
+  "editor.filter_area": "Areas",
+  "editor.filter_floor": "Floors",
+  "editor.filter_label": "Labels",
+  "editor.filter_name": "Name contains",
+  "editor.matching_entities": "Matching entities: {count}",
 };
 
 export type TranslationKey = keyof typeof en;
