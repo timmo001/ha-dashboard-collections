@@ -1,0 +1,16 @@
+---
+name: Lint
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  oxlint:
+    uses: timmo001/workflows/.github/workflows/lint-oxlint.yml@a7b34d53ef8f83b1763fd0d3257a0168416e23ab # 20261001.2
+    with:
+      package-manager: pnpm

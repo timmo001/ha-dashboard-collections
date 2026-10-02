@@ -1,0 +1,30 @@
+{
+  "name": "dashboard-collections",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.8.1",
+  "scripts": {
+    "build": "tsc --noEmit && rolldown -c",
+    "check": "pnpm run build && node --check dist/ha-dashboard-collections.js",
+    "lint": "oxlint",
+    "prepare": "simple-git-hooks",
+    "publish-to-local": "bash ./scripts/publish-to-local.sh",
+    "start": "rolldown -c --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm run lint && pnpm run check"
+  },
+  "dependencies": {
+    "lit": "3.3.3"
+  },
+  "devDependencies": {
+    "@oxlint/plugins": "1.86.0",
+    "@timmo001/oxlint-rules": "0.5.0",
+    "oxlint": "1.86.0",
+    "oxlint-tsgolint": "7.0.2003",
+    "rolldown": "1.2.12",
+    "simple-git-hooks": "2.14.0",
+    "typescript": "7.0.2"
+  }
+}

@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+node_modules/
+.env
+dist/
+www/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.fallow/
