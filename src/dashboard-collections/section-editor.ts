@@ -3,7 +3,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import {
   applyMatch,
   type CardEditorElement,
-  loadHeadingCard,
+  loadHeadingCardEditor,
 } from "./filters-editor";
 import "./filters-editor";
 import { setupLocalize } from "./localize";
@@ -26,21 +26,14 @@ export class DashboardCollectionsSectionEditor extends LitElement {
 
   @state() private _headingEditor?: CardEditorElement;
 
-  private _headingStub?: HeadingCardConfig;
-
   public setConfig(config: CollectionSectionStrategyConfig) {
     this._config = config;
   }
 
   protected firstUpdated() {
     if (this.hass) {
-      void loadHeadingCard(this.hass).then((headingCard) => {
-        if (!headingCard) {
-          return;
-        }
-
-        this._headingStub = headingCard.stubConfig;
-        this._headingEditor = headingCard.editor;
+      void loadHeadingCardEditor().then((editor) => {
+        this._headingEditor = editor;
       });
     }
   }
@@ -100,12 +93,16 @@ export class DashboardCollectionsSectionEditor extends LitElement {
       return;
     }
 
-    const defaultHeading =
-      (this.hass &&
-        makeScopeHeading(setupLocalize(this.hass), this.hass, this._config)) ??
-      this._headingStub;
+    const localize = setupLocalize(this.hass);
 
-    this._setHeading(toSectionHeading(defaultHeading ?? { type: "heading" }));
+    const scopeHeading =
+      this.hass && makeScopeHeading(localize, this.hass, this._config);
+
+    this._setHeading(
+      scopeHeading
+        ? toSectionHeading(scopeHeading)
+        : { heading: localize("section.default_heading") },
+    );
   };
 
   private _headingChanged = (ev: CustomEvent<{ config: HeadingCardConfig }>) => {

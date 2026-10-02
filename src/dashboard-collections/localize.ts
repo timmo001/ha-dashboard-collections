@@ -11,6 +11,7 @@ const en = {
   "section.areas": "Areas",
   "section.other_areas": "Other areas",
   "section.no_area": "No area",
+  "section.default_heading": "Collection",
   "section.empty": "No entities match this collection.",
 
   // Editors

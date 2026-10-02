@@ -113,7 +113,6 @@ export interface CardEditorElement extends HTMLElement {
 
 interface CardConstructor {
   getConfigElement?: () => Promise<CardEditorElement>;
-  getStubConfig?: (hass: HomeAssistant) => HeadingCardConfig;
 }
 
 const loadCardConstructor = async (
@@ -143,14 +142,11 @@ export const loadEditorElements = async () => {
   await tileCard?.getConfigElement?.();
 };
 
-/** Home Assistant's heading card editor and its default heading. */
-export const loadHeadingCard = async (hass: HomeAssistant) => {
+/** Home Assistant's heading card editor. */
+export const loadHeadingCardEditor = async () => {
   const headingCard = await loadCardConstructor("heading");
-  const editor = await headingCard?.getConfigElement?.();
 
-  return editor
-    ? { editor, stubConfig: headingCard?.getStubConfig?.(hass) }
-    : undefined;
+  return headingCard?.getConfigElement?.();
 };
 
 /** Applies an edited `CollectionMatch` to a collection or section config. */
