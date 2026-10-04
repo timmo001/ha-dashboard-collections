@@ -2,7 +2,7 @@
   "name": "dashboard-collections",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@12.8.1",
+  "packageManager": "pnpm@12.9.0",
   "scripts": {
     "build": "tsc --noEmit && rolldown -c",
     "check": "pnpm run build && node --check dist/ha-dashboard-collections.js",
