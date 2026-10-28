@@ -1,6 +1,19 @@
 const en = {
+  // Strategy pickers (`window.customStrategies`)
+  "strategy.dashboard.name": "Collections",
+  "strategy.dashboard.description":
+    "Filtered collections of entities, such as temperature, humidity or batteries, grouped by area.",
+  "strategy.section.name": "Collection",
+  "strategy.section.description":
+    "Entities matching your filters, such as temperature, humidity or batteries, grouped by area.",
+
   // Create-dashboard dialog default title (`getCreateSuggestions`)
   "dashboard.suggested_title": "Collections",
+
+  // Sample section headings for the section picker (`getStubConfig`)
+  "stub.temperature": "Temperatures",
+  "stub.humidity": "Humidity",
+  "stub.battery": "Batteries",
 
   // Placeholder view when no collections are configured
   "view.empty_title": "Collections",

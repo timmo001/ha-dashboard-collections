@@ -5,10 +5,11 @@ import {
   getCollectionEntities,
 } from "./collection-filter";
 import { loadEditorElements } from "./filters-editor";
-import { setupLocalize } from "./localize";
+import { setupLocalize, type TranslationKey } from "./localize";
 import "./section-editor";
 import { makeSectionHeading } from "./section-heading";
 import type {
+  CollectionMatch,
   CollectionSectionStrategyConfig,
   HomeAssistant,
   LovelaceCardConfig,
@@ -37,12 +38,59 @@ const isInScope = (
 const makeTiles = (entities: CollectionEntity[]): LovelaceCardConfig[] =>
   entities.map((entity) => ({ type: "tile", entity: entity.entityId }));
 
+const STUB_COLLECTIONS: (CollectionMatch & {
+  heading: TranslationKey;
+  icon: string;
+})[] = [
+  {
+    heading: "stub.temperature",
+    icon: "mdi:thermometer",
+    filters: [{ domain: "sensor", device_class: "temperature" }],
+  },
+  {
+    heading: "stub.humidity",
+    icon: "mdi:water-percent",
+    filters: [{ domain: "sensor", device_class: "humidity" }],
+  },
+  {
+    heading: "stub.battery",
+    icon: "mdi:battery",
+    include_diagnostic: true,
+    filters: [{ domain: "sensor", device_class: "battery" }],
+  },
+];
+
 @customElement("ll-strategy-section-collection")
 export class CollectionSectionStrategy extends ReactiveElement {
   public static async getConfigElement() {
     await loadEditorElements();
 
     return document.createElement("dashboard-collections-section-editor");
+  }
+
+  /**
+   * The new section and its preview when it's added from the section picker:
+   * the first sample collection with matching entities, if any.
+   */
+  public static getStubConfig(
+    hass: HomeAssistant,
+  ): CollectionSectionStrategyConfig | undefined {
+    const stub = STUB_COLLECTIONS.find(
+      (collection) => getCollectionEntities(hass, collection).length > 0,
+    );
+
+    if (!stub) {
+      return undefined;
+    }
+
+    const localize = setupLocalize(hass);
+    const { heading, icon, ...match } = stub;
+
+    return {
+      type: "custom:collection",
+      heading: { heading: localize(heading), icon },
+      ...match,
+    };
   }
 
   public static async generate(

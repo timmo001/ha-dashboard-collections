@@ -1,21 +1,41 @@
 import "./dashboard-collections/collection-section-strategy";
 import "./dashboard-collections/collections-dashboard-strategy";
+import { setupLocalize } from "./dashboard-collections/localize";
 
-window.customStrategies = window.customStrategies || [];
+const DOCUMENTATION_URL =
+  "https://github.com/timmo001/ha-dashboard-collections#readme";
 
-if (
-  !window.customStrategies.some(
-    (strategy) =>
-      strategy.type === "collections" && strategy.strategyType === "dashboard",
-  )
-) {
-  window.customStrategies.push({
+const localize = setupLocalize();
+
+const STRATEGIES = [
+  {
     type: "collections",
-    name: "Collections",
-    description:
-      "Filtered collections of entities, such as temperature, humidity or batteries, grouped by area.",
     strategyType: "dashboard",
-  });
+    name: localize("strategy.dashboard.name"),
+    description: localize("strategy.dashboard.description"),
+  },
+  {
+    type: "collection",
+    strategyType: "section",
+    name: localize("strategy.section.name"),
+    description: localize("strategy.section.description"),
+  },
+] as const;
+
+window.customStrategies ??= [];
+
+for (const strategy of STRATEGIES) {
+  if (
+    !window.customStrategies.some(
+      ({ type, strategyType }) =>
+        type === strategy.type && strategyType === strategy.strategyType,
+    )
+  ) {
+    window.customStrategies.push({
+      ...strategy,
+      documentationURL: DOCUMENTATION_URL,
+    });
+  }
 }
 
 declare global {
