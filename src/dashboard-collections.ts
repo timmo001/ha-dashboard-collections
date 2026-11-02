@@ -1,3 +1,4 @@
+import "./dashboard-collections/collection-card";
 import "./dashboard-collections/collection-section-strategy";
 import "./dashboard-collections/collections-dashboard-strategy";
 import { setupLocalize } from "./dashboard-collections/localize";
@@ -38,8 +39,26 @@ for (const strategy of STRATEGIES) {
   }
 }
 
+window.customCards ??= [];
+
+if (!window.customCards.some(({ type }) => type === "dashboard-collections-card")) {
+  window.customCards.push({
+    type: "dashboard-collections-card",
+    name: localize("card.name"),
+    description: localize("card.description"),
+    documentationURL: DOCUMENTATION_URL,
+  });
+}
+
 declare global {
   interface Window {
+    customCards?: Array<{
+      type: string;
+      name?: string;
+      description?: string;
+      documentationURL?: string;
+      preview?: boolean;
+    }>;
     customStrategies?: Array<{
       type: string;
       name?: string;

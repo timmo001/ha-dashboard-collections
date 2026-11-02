@@ -356,6 +356,7 @@ declare global {
     loadCardHelpers?: () => Promise<{
       createCardElement: (config: { type: string }) => HTMLElement & {
         constructor: CardConstructor;
+        hass?: HomeAssistant;
       };
     }>;
   }

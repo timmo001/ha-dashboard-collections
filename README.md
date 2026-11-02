@@ -6,7 +6,8 @@ Custom Lovelace strategies for Home Assistant that build dashboards from filtere
 
 - `custom:collections` dashboard strategy, available from **Add dashboard**. Each collection becomes a view, with one section per floor, then areas without a floor, then entities without an area.
 - `custom:collection` section strategy, usable in any sections view and available from the section picker
-- Editors for both, so collections and filters can be set up without YAML
+- `custom:dashboard-collections-card`, the same collection as a card, for any view
+- Editors for both strategies, so collections and filters can be set up without YAML
 
 ## Filters
 
@@ -80,6 +81,20 @@ strategy:
 ```
 
 The section shows every matching entity grouped by area, with entities without an area last. `heading` is optional and takes the same options as Home Assistant's heading card, without `type`. After saving, from Home Assistant 2026.10 its heading and filters can be edited in the section's editor without YAML.
+
+## Use as a card
+
+For views that aren't sections views, such as masonry, add the **Collection** card. It takes the same options as the section, set in YAML:
+
+```yaml
+type: custom:dashboard-collections-card
+heading:
+  heading: Temperatures
+  icon: mdi:thermometer
+filters:
+  - domain: sensor
+    device_class: temperature
+```
 
 <!-- ha-marketplace:exclude-start -->
 ## Local development setup

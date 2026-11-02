@@ -145,6 +145,12 @@ export interface CollectionSectionStrategyConfig extends CollectionMatch {
   area?: null;
 }
 
+/** The section strategy's options, as a card. */
+export interface CollectionCardConfig
+  extends Omit<CollectionSectionStrategyConfig, "type"> {
+  type: "custom:dashboard-collections-card";
+}
+
 export interface CollectionConfig extends CollectionMatch {
   title: string;
   icon?: string;
