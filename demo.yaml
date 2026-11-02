@@ -1,0 +1,162 @@
+# Live demo on https://timmo.dev/demos/ha-dashboard-collections, rendered with
+# Home Assistant's embed components against mocked entities. It's read from
+# each release, so it has to match that release's card.
+#
+# The embed renders cards, not dashboards, so this uses the collection card:
+# the collection section strategy's output as a card. Each collection matches
+# its filters across every entity and groups the matches by area, in the order
+# of `areas`, with the ones without an area last. The batteries set `icon`, as
+# the embed doesn't pick a battery icon from the state.
+entities:
+  - entity_id: sensor.living_room_temperature
+    state: "21.4"
+    area_id: living_room
+    attributes:
+      friendly_name: Living room temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: °C
+  - entity_id: sensor.thermostat_temperature
+    state: "22.1"
+    area_id: living_room
+    attributes:
+      friendly_name: Thermostat temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: °C
+  - entity_id: sensor.kitchen_temperature
+    state: "23.0"
+    area_id: kitchen
+    attributes:
+      friendly_name: Kitchen temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: °C
+  - entity_id: sensor.fridge_temperature
+    state: "4.2"
+    area_id: kitchen
+    attributes:
+      friendly_name: Fridge temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: °C
+  - entity_id: sensor.bedroom_temperature
+    state: "18.6"
+    area_id: bedroom
+    attributes:
+      friendly_name: Bedroom temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: °C
+  - entity_id: sensor.office_temperature
+    state: "20.3"
+    area_id: office
+    attributes:
+      friendly_name: Office temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: °C
+  - entity_id: sensor.outdoor_temperature
+    state: "9.8"
+    attributes:
+      friendly_name: Outdoor temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: °C
+  - entity_id: sensor.living_room_humidity
+    state: "48"
+    area_id: living_room
+    attributes:
+      friendly_name: Living room humidity
+      device_class: humidity
+      state_class: measurement
+      unit_of_measurement: "%"
+  - entity_id: sensor.bedroom_humidity
+    state: "55"
+    area_id: bedroom
+    attributes:
+      friendly_name: Bedroom humidity
+      device_class: humidity
+      state_class: measurement
+      unit_of_measurement: "%"
+  - entity_id: sensor.living_room_motion_battery
+    state: "87"
+    area_id: living_room
+    attributes:
+      friendly_name: Living room motion battery
+      icon: mdi:battery-80
+      device_class: battery
+      state_class: measurement
+      unit_of_measurement: "%"
+  - entity_id: sensor.front_door_lock_battery
+    state: "64"
+    area_id: hallway
+    attributes:
+      friendly_name: Front door lock battery
+      icon: mdi:battery-60
+      device_class: battery
+      state_class: measurement
+      unit_of_measurement: "%"
+  - entity_id: sensor.hallway_motion_battery
+    state: "12"
+    area_id: hallway
+    attributes:
+      friendly_name: Hallway motion battery
+      icon: mdi:battery-10
+      device_class: battery
+      state_class: measurement
+      unit_of_measurement: "%"
+  - entity_id: sensor.bedroom_remote_battery
+    state: "93"
+    area_id: bedroom
+    attributes:
+      friendly_name: Bedroom remote battery
+      icon: mdi:battery-90
+      device_class: battery
+      state_class: measurement
+      unit_of_measurement: "%"
+  - entity_id: sensor.office_window_battery
+    state: "41"
+    area_id: office
+    attributes:
+      friendly_name: Office window sensor battery
+      icon: mdi:battery-40
+      device_class: battery
+      state_class: measurement
+      unit_of_measurement: "%"
+  - entity_id: light.kitchen
+    state: "on"
+    area_id: kitchen
+    attributes:
+      friendly_name: Kitchen
+      brightness: 200
+      color_mode: brightness
+      supported_color_modes:
+        - brightness
+areas:
+  - area_id: living_room
+    name: Living room
+  - area_id: kitchen
+    name: Kitchen
+  - area_id: hallway
+    name: Hallway
+  - area_id: bedroom
+    name: Bedroom
+  - area_id: office
+    name: Office
+cards:
+  - type: custom:dashboard-collections-card
+    heading:
+      heading: Temperatures
+      icon: mdi:thermometer
+    filters:
+      - domain: sensor
+        device_class: temperature
+  - type: custom:dashboard-collections-card
+    heading:
+      heading: Batteries
+      icon: mdi:battery
+    include_diagnostic: true
+    filters:
+      - domain: sensor
+        device_class: battery
