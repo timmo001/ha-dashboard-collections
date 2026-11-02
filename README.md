@@ -24,6 +24,7 @@ Each collection has a list of filters. An entity is shown when it matches any fi
 
 Each key except `name` takes one value or a list.
 
+<!-- ha-marketplace:exclude-start -->
 ## Install with HACS
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=timmo001&repository=ha-dashboard-collections&category=plugin)
@@ -37,6 +38,7 @@ Each key except `name` takes one value or a list.
    - Type: `module`
 
 5. Reload Lovelace resources or refresh Home Assistant.
+<!-- ha-marketplace:exclude-end -->
 
 ## Use as a full dashboard
 
@@ -79,6 +81,7 @@ strategy:
 
 The section shows every matching entity grouped by area, with entities without an area last. `heading` is optional and takes the same options as Home Assistant's heading card, without `type`. After saving, from Home Assistant 2026.10 its heading and filters can be edited in the section's editor without YAML.
 
+<!-- ha-marketplace:exclude-start -->
 ## Local development setup
 
 The local publish flow copies the built bundle into `/config/www/community/ha-dashboard-collections/` over SSH with `rsync`, so your development machine needs `ssh` and `rsync`, and your Home Assistant instance needs SSH access set up first.
@@ -117,3 +120,4 @@ pnpm run check
 - Local build output: `dist/ha-dashboard-collections.js`
 - Local publish target: `/config/www/community/ha-dashboard-collections/ha-dashboard-collections.js`
 - Recommended local dev resource URL: `/local/community/ha-dashboard-collections/ha-dashboard-collections.js`
+<!-- ha-marketplace:exclude-end -->
