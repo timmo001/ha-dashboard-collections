@@ -7,6 +7,11 @@ const en = {
   "strategy.section.description":
     "Entities matching your filters, such as temperature, humidity or batteries, grouped by area.",
 
+  // Card picker (`window.customCards`)
+  "card.name": "Collection",
+  "card.description":
+    "Entities matching your filters, such as temperature, humidity or batteries, grouped by area. The same as the collection section, as a card.",
+
   // Create-dashboard dialog default title (`getCreateSuggestions`)
   "dashboard.suggested_title": "Collections",
 
