@@ -2,8 +2,9 @@
 # Home Assistant's embed components against mocked entities. It's read from
 # each release, so it has to match that release's card.
 #
-# The embed renders cards, not dashboards, so this uses the collection card:
-# the collection section strategy's output as a card. Each collection matches
+# It shows everything the project adds, against one mocked home: the full
+# collections dashboard, with a tab for each collection, collection sections,
+# and the collection card for views without sections. Each collection matches
 # its filters across every entity and groups the matches by area, in the order
 # of `areas`, with the ones without an area last. The batteries set `icon`, as
 # the embed doesn't pick a battery icon from the state.
@@ -144,14 +145,46 @@ areas:
     name: Bedroom
   - area_id: office
     name: Office
+dashboard:
+  strategy:
+    type: custom:collections
+    collections:
+      - title: Temperature
+        icon: mdi:thermometer
+        show_icon_and_title: true
+        filters:
+          - domain: sensor
+            device_class: temperature
+      - title: Humidity
+        icon: mdi:water-percent
+        show_icon_and_title: true
+        filters:
+          - domain: sensor
+            device_class: humidity
+      - title: Batteries
+        icon: mdi:battery
+        show_icon_and_title: true
+        include_diagnostic: true
+        filters:
+          - device_class: battery
+sections:
+  - strategy:
+      type: custom:collection
+      heading:
+        heading: Temperatures
+        icon: mdi:thermometer
+      filters:
+        - domain: sensor
+          device_class: temperature
+  - strategy:
+      type: custom:collection
+      heading:
+        heading: Humidity
+        icon: mdi:water-percent
+      filters:
+        - domain: sensor
+          device_class: humidity
 cards:
-  - type: custom:dashboard-collections-card
-    heading:
-      heading: Temperatures
-      icon: mdi:thermometer
-    filters:
-      - domain: sensor
-        device_class: temperature
   - type: custom:dashboard-collections-card
     heading:
       heading: Batteries
