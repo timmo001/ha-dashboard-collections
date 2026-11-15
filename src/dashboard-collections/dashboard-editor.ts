@@ -9,7 +9,11 @@ import {
 } from "./editor-item-group";
 import { applyMatch, MDI_DELETE_PATH, MDI_PLUS_PATH } from "./filters-editor";
 import "./filters-editor";
-import { type LocalizeFunc, setupLocalize, type TranslationKey } from "./localize";
+import {
+  type LocalizeFunc,
+  setupLocalize,
+  type TranslationKey,
+} from "./localize";
 import type {
   CollectionConfig,
   CollectionMatch,
@@ -34,7 +38,10 @@ type CollectionDetails = Pick<
 type CollectionFormSchema =
   | { name: "title"; required: true; selector: { text: Record<string, never> } }
   | { name: "icon"; selector: { icon: Record<string, never> } }
-  | { name: "show_icon_and_title"; selector: { boolean: Record<string, never> } }
+  | {
+      name: "show_icon_and_title";
+      selector: { boolean: Record<string, never> };
+    }
   | { name: "path"; selector: { text: Record<string, never> } };
 
 const COLLECTION_SCHEMA: CollectionFormSchema[] = [
@@ -51,7 +58,9 @@ const LABEL_KEYS: Record<CollectionFormSchema["name"], TranslationKey> = {
   path: "editor.collection_path",
 };
 
-const HELPER_KEYS: Partial<Record<CollectionFormSchema["name"], TranslationKey>> = {
+const HELPER_KEYS: Partial<
+  Record<CollectionFormSchema["name"], TranslationKey>
+> = {
   show_icon_and_title: "editor.collection_show_icon_and_title_helper",
   path: "editor.collection_path_helper",
 };
@@ -88,7 +97,10 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     // The collection editor needs room for its forms, so widen the dialog.
     let node: Node | null = this.parentNode;
 
-    while (node && !(node instanceof HTMLElement && node.localName === "ha-dialog")) {
+    while (
+      node &&
+      !(node instanceof HTMLElement && node.localName === "ha-dialog")
+    ) {
       node = node.parentNode ?? (node instanceof ShadowRoot ? node.host : null);
     }
 
@@ -118,7 +130,9 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     const collections = this._config.collections ?? [];
 
     const editing =
-      this._editingIndex === undefined ? undefined : collections[this._editingIndex];
+      this._editingIndex === undefined
+        ? undefined
+        : collections[this._editingIndex];
 
     if (editing) {
       return this._renderCollectionEditor(localize, editing);
@@ -126,20 +140,27 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
 
     return html`
       <div class="items">
-        ${collections.length === 0
-          ? html`<p class="secondary">${localize("editor.no_collections")}</p>`
-          : html`
-              <ha-sortable handle-selector=".handle" @item-moved=${this._collectionMoved}>
-                <div class="rows">
-                  ${repeat(
-                    collections,
-                    (collection) => this._collectionKey(collection),
-                    (collection, index) =>
-                      this._renderCollectionRow(localize, collection, index),
-                  )}
-                </div>
-              </ha-sortable>
-            `}
+        ${
+          collections.length === 0
+            ? html`<p class="secondary">
+                ${localize("editor.no_collections")}
+              </p>`
+            : html`
+                <ha-sortable
+                  handle-selector=".handle"
+                  @item-moved=${this._collectionMoved}
+                >
+                  <div class="rows">
+                    ${repeat(
+                      collections,
+                      (collection) => this._collectionKey(collection),
+                      (collection, index) =>
+                        this._renderCollectionRow(localize, collection, index),
+                    )}
+                  </div>
+                </ha-sortable>
+              `
+        }
         <ha-button appearance="filled" size="s" @click=${this._addCollection}>
           <ha-svg-icon .path=${MDI_PLUS_PATH} slot="start"></ha-svg-icon>
           ${localize("editor.collection_add")}
@@ -195,7 +216,10 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     });
   }
 
-  private _renderCollectionEditor(localize: LocalizeFunc, collection: CollectionConfig) {
+  private _renderCollectionEditor(
+    localize: LocalizeFunc,
+    collection: CollectionConfig,
+  ) {
     return html`
       <div class="sub-editor-header">
         <ha-icon-button-prev
@@ -214,9 +238,11 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
             path: collection.path,
           }}
           .schema=${COLLECTION_SCHEMA}
-          .error=${collection.path && !isValidViewPath(collection.path)
-            ? { path: localize("editor.collection_path_invalid") }
-            : undefined}
+          .error=${
+            collection.path && !isValidViewPath(collection.path)
+              ? { path: localize("editor.collection_path_invalid") }
+              : undefined
+          }
           .computeLabel=${(item: CollectionFormSchema) => localize(LABEL_KEYS[item.name])}
           .computeHelper=${(item: CollectionFormSchema) => {
             const key = HELPER_KEYS[item.name];
@@ -276,7 +302,9 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     this._updateCollections(collections);
   };
 
-  private _collectionDetailsChanged = (ev: CustomEvent<{ value: CollectionDetails }>) => {
+  private _collectionDetailsChanged = (
+    ev: CustomEvent<{ value: CollectionDetails }>,
+  ) => {
     ev.stopPropagation();
 
     const { title, icon, show_icon_and_title, path } = ev.detail.value;
@@ -304,7 +332,9 @@ export class DashboardCollectionsStrategyEditor extends LitElement {
     });
   };
 
-  private _collectionMatchChanged = (ev: CustomEvent<{ value: CollectionMatch }>) => {
+  private _collectionMatchChanged = (
+    ev: CustomEvent<{ value: CollectionMatch }>,
+  ) => {
     this._updateEditingCollection((collection) =>
       applyMatch(collection, ev.detail.value),
     );

@@ -41,7 +41,10 @@ export class DashboardCollectionsSectionEditor extends LitElement {
   protected updated() {
     if (this._headingEditor && this._config?.heading) {
       this._headingEditor.hass = this.hass;
-      this._headingEditor.setConfig({ ...this._config.heading, type: "heading" });
+      this._headingEditor.setConfig({
+        ...this._config.heading,
+        type: "heading",
+      });
     }
   }
 
@@ -63,11 +66,13 @@ export class DashboardCollectionsSectionEditor extends LitElement {
             .computeHelper=${() => localize("editor.show_heading_helper")}
             @value-changed=${this._showHeadingChanged}
           ></ha-form>
-          ${this._config.heading
-            ? html`<div @config-changed=${this._headingChanged}>
-                ${this._headingEditor}
-              </div>`
-            : nothing}
+          ${
+            this._config.heading
+              ? html`<div @config-changed=${this._headingChanged}>
+                  ${this._headingEditor}
+                </div>`
+              : nothing
+          }
         </div>
       </ha-expansion-panel>
       <dashboard-collections-filters-editor
@@ -105,7 +110,9 @@ export class DashboardCollectionsSectionEditor extends LitElement {
     );
   };
 
-  private _headingChanged = (ev: CustomEvent<{ config: HeadingCardConfig }>) => {
+  private _headingChanged = (
+    ev: CustomEvent<{ config: HeadingCardConfig }>,
+  ) => {
     // The heading editor's config is not the section config.
     ev.stopPropagation();
     this._setHeading(toSectionHeading(ev.detail.config));
@@ -116,7 +123,10 @@ export class DashboardCollectionsSectionEditor extends LitElement {
       return;
     }
 
-    const config: CollectionSectionStrategyConfig = { ...this._config, heading };
+    const config: CollectionSectionStrategyConfig = {
+      ...this._config,
+      heading,
+    };
 
     if (!heading) {
       delete config.heading;

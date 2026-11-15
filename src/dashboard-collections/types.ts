@@ -78,9 +78,7 @@ export interface MarkdownCardConfig {
 }
 
 export type LovelaceCardConfig =
-  | HeadingCardConfig
-  | TileCardConfig
-  | MarkdownCardConfig;
+  HeadingCardConfig | TileCardConfig | MarkdownCardConfig;
 
 export interface LovelaceSectionConfig {
   type?: string;
@@ -146,8 +144,10 @@ export interface CollectionSectionStrategyConfig extends CollectionMatch {
 }
 
 /** The section strategy's options, as a card. */
-export interface CollectionCardConfig
-  extends Omit<CollectionSectionStrategyConfig, "type"> {
+export interface CollectionCardConfig extends Omit<
+  CollectionSectionStrategyConfig,
+  "type"
+> {
   type: "custom:dashboard-collections-card";
 }
 

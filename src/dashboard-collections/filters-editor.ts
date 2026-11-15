@@ -61,7 +61,9 @@ const OPTIONS_SCHEMA = [
 ];
 
 const uniqueSorted = (values: (string | undefined)[]) =>
-  [...new Set(values.filter((value): value is string => Boolean(value)))].sort();
+  [
+    ...new Set(values.filter((value): value is string => Boolean(value))),
+  ].sort();
 
 const selectSelector = (options: string[]): FilterSelector => ({
   select: {
@@ -209,7 +211,10 @@ export class DashboardCollectionsFiltersEditor extends LitElement {
                 data-index=${index}
                 @click=${this._removeFilter}
               >
-                <ha-svg-icon .path=${MDI_DELETE_PATH} slot="start"></ha-svg-icon>
+                <ha-svg-icon
+                  .path=${MDI_DELETE_PATH}
+                  slot="start"
+                ></ha-svg-icon>
                 ${localize("editor.filter_remove")}
               </ha-button>
             </div>
@@ -291,7 +296,9 @@ export class DashboardCollectionsFiltersEditor extends LitElement {
     const index = eventIndex(ev);
 
     this._emit({
-      filters: this._filters.filter((_filter, filterIndex) => filterIndex !== index),
+      filters: this._filters.filter(
+        (_filter, filterIndex) => filterIndex !== index,
+      ),
     });
   };
 
@@ -299,7 +306,9 @@ export class DashboardCollectionsFiltersEditor extends LitElement {
     ev: CustomEvent<{ value: { include_diagnostic?: boolean } }>,
   ) => {
     ev.stopPropagation();
-    this._emit({ include_diagnostic: ev.detail.value.include_diagnostic || undefined });
+    this._emit({
+      include_diagnostic: ev.detail.value.include_diagnostic || undefined,
+    });
   };
 
   private _emit(updates: CollectionMatch) {

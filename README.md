@@ -13,19 +13,20 @@ Custom Lovelace strategies for Home Assistant that build dashboards from filtere
 
 Each collection has a list of filters. An entity is shown when it matches any filter in the list, and it matches a filter when it matches every key set in that filter. Hidden entities are left out. Configuration and diagnostic entities are left out too, unless the collection or section sets `include_diagnostic: true`. Many integrations mark battery sensors as diagnostic.
 
-| Key | Matches |
-| --- | --- |
-| `domain` | Entity domain, for example `sensor` |
-| `device_class` | Device class, for example `temperature` |
-| `integration` | Integration that provides the entity, for example `zha` |
-| `area` | Area ID of the entity, or of its device |
-| `floor` | Floor ID of that area |
-| `label` | Label ID on the entity |
-| `name` | Every word appears in the entity name or ID |
+| Key            | Matches                                                 |
+| -------------- | ------------------------------------------------------- |
+| `domain`       | Entity domain, for example `sensor`                     |
+| `device_class` | Device class, for example `temperature`                 |
+| `integration`  | Integration that provides the entity, for example `zha` |
+| `area`         | Area ID of the entity, or of its device                 |
+| `floor`        | Floor ID of that area                                   |
+| `label`        | Label ID on the entity                                  |
+| `name`         | Every word appears in the entity name or ID             |
 
 Each key except `name` takes one value or a list.
 
 <!-- ha-marketplace:exclude-start -->
+
 ## Install with HACS
 
 [![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=timmo001&repository=ha-dashboard-collections&category=plugin)
@@ -39,6 +40,7 @@ Each key except `name` takes one value or a list.
    - Type: `module`
 
 5. Reload Lovelace resources or refresh Home Assistant.
+
 <!-- ha-marketplace:exclude-end -->
 
 ## Use as a full dashboard
@@ -97,6 +99,7 @@ filters:
 ```
 
 <!-- ha-marketplace:exclude-start -->
+
 ## Local development setup
 
 The local publish flow copies the built bundle into `/config/www/community/ha-dashboard-collections/` over SSH with `rsync`, so your development machine needs `ssh` and `rsync`, and your Home Assistant instance needs SSH access set up first.
@@ -135,4 +138,5 @@ pnpm run check
 - Local build output: `dist/ha-dashboard-collections.js`
 - Local publish target: `/config/www/community/ha-dashboard-collections/ha-dashboard-collections.js`
 - Recommended local dev resource URL: `/local/community/ha-dashboard-collections/ha-dashboard-collections.js`
+
 <!-- ha-marketplace:exclude-end -->

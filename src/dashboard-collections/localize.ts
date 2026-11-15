@@ -22,8 +22,7 @@ const en = {
 
   // Placeholder view when no collections are configured
   "view.empty_title": "Collections",
-  "view.empty_content":
-    "No collections yet. Edit this dashboard to add one.",
+  "view.empty_content": "No collections yet. Edit this dashboard to add one.",
 
   // Collection sections
   "section.areas": "Areas",
@@ -42,7 +41,8 @@ const en = {
   "editor.collection_title": "Title",
   "editor.collection_icon": "Icon",
   "editor.collection_show_icon_and_title": "Show icon and title",
-  "editor.collection_show_icon_and_title_helper": "Show both icon and text title.",
+  "editor.collection_show_icon_and_title_helper":
+    "Show both icon and text title.",
   "editor.collection_path": "URL",
   "editor.collection_path_helper":
     "This value will become part of the URL path to open this view. Leave empty to use the title.",
@@ -89,9 +89,9 @@ export type LocalizeFunc = (
  */
 const languages: Record<string, Partial<Record<TranslationKey, string>>> = {};
 
-export const setupLocalize = (
-  hass?: { locale?: { language?: string } },
-): LocalizeFunc => {
+export const setupLocalize = (hass?: {
+  locale?: { language?: string };
+}): LocalizeFunc => {
   const lang = hass?.locale?.language || "en";
   const baseLang = lang.split("-")[0];
 

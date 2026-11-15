@@ -41,7 +41,9 @@ for (const strategy of STRATEGIES) {
 
 window.customCards ??= [];
 
-if (!window.customCards.some(({ type }) => type === "dashboard-collections-card")) {
+if (
+  !window.customCards.some(({ type }) => type === "dashboard-collections-card")
+) {
   window.customCards.push({
     type: "dashboard-collections-card",
     name: localize("card.name"),

@@ -99,8 +99,8 @@ export class CollectionSectionStrategy extends ReactiveElement {
   ): Promise<LovelaceSectionConfig> {
     const localize = setupLocalize(hass);
 
-    const entities = getCollectionEntities(hass, config).filter(
-      (entity) => isInScope(config, entity),
+    const entities = getCollectionEntities(hass, config).filter((entity) =>
+      isInScope(config, entity),
     );
 
     const isScoped = config.floor !== undefined || config.area === null;

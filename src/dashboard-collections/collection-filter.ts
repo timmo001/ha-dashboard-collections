@@ -1,8 +1,4 @@
-import type {
-  CollectionFilter,
-  CollectionMatch,
-  HomeAssistant,
-} from "./types";
+import type { CollectionFilter, CollectionMatch, HomeAssistant } from "./types";
 
 export interface CollectionEntity {
   entityId: string;
@@ -110,7 +106,9 @@ export const getCollectionEntities = (
       filters.some((filter) => matchesFilter(hass, entity, filter)),
     )
     .sort((a, b) =>
-      (hass.states[a.entityId].attributes.friendly_name ?? a.entityId).localeCompare(
+      (
+        hass.states[a.entityId].attributes.friendly_name ?? a.entityId
+      ).localeCompare(
         hass.states[b.entityId].attributes.friendly_name ?? b.entityId,
       ),
     );

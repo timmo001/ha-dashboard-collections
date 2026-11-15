@@ -75,10 +75,11 @@ const makeViewPath = (
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-  const path = [collection.path, slug].find(
-    (candidate) =>
-      candidate && isValidViewPath(candidate) && !usedPaths.has(candidate),
-  ) ?? `collection-${index + 1}`;
+  const path =
+    [collection.path, slug].find(
+      (candidate) =>
+        candidate && isValidViewPath(candidate) && !usedPaths.has(candidate),
+    ) ?? `collection-${index + 1}`;
 
   usedPaths.add(path);
 
@@ -109,17 +110,15 @@ export class CollectionsDashboardStrategy extends ReactiveElement {
     const usedPaths = new Set<string>();
 
     return {
-      views: collections.map(
-        (collection, index): LovelaceViewConfig => ({
-          type: "sections",
-          title: collection.title,
-          path: makeViewPath(collection, index, usedPaths),
-          icon: collection.icon,
-          show_icon_and_title: collection.show_icon_and_title,
-          max_columns: COLUMN_SPAN,
-          sections: buildCollectionSections(localize, hass, collection),
-        }),
-      ),
+      views: collections.map((collection, index): LovelaceViewConfig => ({
+        type: "sections",
+        title: collection.title,
+        path: makeViewPath(collection, index, usedPaths),
+        icon: collection.icon,
+        show_icon_and_title: collection.show_icon_and_title,
+        max_columns: COLUMN_SPAN,
+        sections: buildCollectionSections(localize, hass, collection),
+      })),
     };
   }
 
