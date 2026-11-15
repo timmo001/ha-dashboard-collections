@@ -1,0 +1,9 @@
+.agents/skills/
+.mise/
+.opencode/
+AGENTS.md
+dist/
+mise.lock
+pnpm-lock.yaml
+skills-lock.json
+vendor/
